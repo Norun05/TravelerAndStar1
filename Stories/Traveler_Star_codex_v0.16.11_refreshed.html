@@ -1860,25 +1860,71 @@ html[data-passage="소지품창"] #passages{
    ============================================================ */
 
 .stat-panel{
-  margin-top: 10px;
-  border: var(--frame-border);
-  border-radius: var(--frame-radius);
-  background: rgba(0,0,0,0.18);
-  padding: 10px 12px;
-  text-align: left;
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border-radius:12px;
+  background: rgba(0,0,0,.25);
+  border: 1px solid rgba(255,255,255,.08);
+  box-sizing:border-box;
 }
+
 .stat-panel .stat-row{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding: 4px 0;
-  font-size: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding:4px 0;
+  font-size:12px;
 }
-.stat-panel .stat-row:last-child{ border-bottom:none; }
-.stat-panel .k{ opacity: .75; }
-.stat-panel .v{ font-weight: 800; color: var(--ui-accent); }
 
+.stat-panel .stat-row .k{
+  opacity:.85;
+  font-weight:800;
+}
+
+.stat-panel .stat-row .v{
+  opacity:.95;
+  font-weight:900;
+}
+
+/* 접힘/펼침 영역 */
+.stat-panel .stat-more{
+  margin-top:6px;
+  padding-top:6px;
+  border-top:1px solid rgba(255,255,255,.08);
+  display:none;
+}
+.stat-panel.is-more-open .stat-more{
+  display:block;
+}
+
+/* 토글 버튼(아래쪽 중앙) */
+.stat-panel .stat-toggle-row{
+  display:flex;
+  justify-content:center;
+  margin-top:6px;
+}
+.stat-panel .stat-toggle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:18px;
+  border-radius:10px;
+  text-decoration:none !important;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  font-size:14px;
+  opacity:.9;
+  user-select:none;
+}
+.stat-panel .stat-toggle:hover{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.16);
+}
+.stat-panel.is-more-open .stat-toggle{
+  transform: rotate(180deg);
+}
 
 /* ============================================================
    16. 미니맵 패널 (우측 패널 상단)
@@ -5979,13 +6025,27 @@ html[data-passage="도감"] #passages{
 	if (locEl) locEl.textContent = "";
 	if (moneyEl) moneyEl.textContent = "";
 
-    const hpEl = document.getElementById("stat-hp");
-    const stressEl = document.getElementById("stat-stress");
-    const fatigueEl = document.getElementById("stat-fatigue");
+	const hpEl = document.getElementById("stat-hp");
+	const energyEl = document.getElementById("stat-energy");
+	const sanityEl = document.getElementById("stat-sanity");
+	const hungerEl = document.getElementById("stat-hunger");
+	const gatherEl = document.getElementById("stat-gather");
+	const speechEl = document.getElementById("stat-speech");
 
-    if (hpEl) hpEl.textContent = String((V.hp != null) ? V.hp : 100);
-    if (stressEl) stressEl.textContent = String((V.stress != null) ? V.stress : 0);
-    if (fatigueEl) fatigueEl.textContent = String((V.fatigue != null) ? V.fatigue : 0);
+	if (V.hp == null) V.hp = 100;
+	if (V.energy == null) V.energy = 100;
+	if (V.sanity == null) V.sanity = 100;
+	if (V.hunger == null) V.hunger = 100;
+	if (V.gather == null) V.gather = 0;
+	if (V.speech == null) V.speech = 0;
+
+	if (hpEl) hpEl.textContent = V.hp;
+	if (energyEl) energyEl.textContent = V.energy;
+	if (sanityEl) sanityEl.textContent = V.sanity;
+	if (hungerEl) hungerEl.textContent = V.hunger;
+	if (gatherEl) gatherEl.textContent = V.gather;
+	if (speechEl) speechEl.textContent = V.speech;
+
   };
 
   $(document).on(":passagedisplay :passagerender", function () {
@@ -5993,6 +6053,30 @@ html[data-passage="도감"] #passages{
       try { setup.sidebarRefresh(); } catch (e) {}
     }, 0);
   });
+
+$(document).on(":passagedisplay :passagerender", function () {
+  setTimeout(function () {
+    try {
+      const V = State.variables;
+      V.ui = (V.ui && typeof V.ui === "object") ? V.ui : {};
+      if (V.ui.statMoreOpen == null) V.ui.statMoreOpen = false;
+
+      const panel = document.getElementById("stat-panel");
+      const btn = document.getElementById("stat-toggle");
+
+      if (panel) panel.classList.toggle("is-more-open", !!V.ui.statMoreOpen);
+
+      if (btn && btn.dataset.bound !== "1") {
+        btn.dataset.bound = "1";
+        btn.addEventListener("click", function (ev) {
+          ev.preventDefault();
+          V.ui.statMoreOpen = !V.ui.statMoreOpen;
+          if (panel) panel.classList.toggle("is-more-open", !!V.ui.statMoreOpen);
+        });
+      }
+    } catch (e) {}
+  }, 0);
+});
 
   /* -----------------------------
      Simple macros: money/pay/hp/stress/fatigue/time/loc
