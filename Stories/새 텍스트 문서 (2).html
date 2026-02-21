@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>rAiL-wAy_gAtE :: iNtEr-pLaNeT_cOmMuNiTy</title>
+
+  <style>
+    /* [1] 네가 만든 오리지널 스타일 그대로 복구 */
+    :root{
+      --bg:#000; --green:#00ff00; --cyan:#00ffff; --magenta:#ff00ff;
+      --yellow:#ffff00; --red:#ff0000; --boxbg: rgba(0, 50, 0, 0.30); --line: #00ff00;
+    }
+    body{
+      background-color: var(--bg); color: var(--green);
+      font-family: "Courier New", Courier, monospace; margin:0; padding: 18px;
+      background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
+                  linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+      background-size: 100% 2px, 3px 100%;
+    }
+    .logo{ font-size: 3em; text-align:center; font-weight:700; color: var(--magenta); text-shadow: 3px 3px var(--yellow); margin: 6px 0 8px 0; letter-spacing: 0.02em; user-select:none; }
+    .highlight-A{ color: var(--yellow); text-decoration: underline; }
+    .sub{ text-align:center; font-size: 12px; color: #9cff9c; opacity: 0.9; margin-bottom: 10px; }
+    .marquee{ background-color: var(--yellow); color:#000; font-weight:700; padding:6px 8px; margin: 10px 0 18px 0; }
+    .container{ display:grid; grid-template-columns: 240px 1fr 280px; gap: 15px; align-items:start; }
+    @media (max-width: 960px){ .container{ grid-template-columns: 1fr; } }
+    .box{ border: 2px solid var(--line); padding: 10px; background: var(--boxbg); margin-bottom: 15px; }
+    .box-title{ background: var(--line); color:#000; font-weight:700; padding: 2px 6px; margin: -10px -10px 10px -10px; }
+    a{ color: var(--cyan); text-decoration:none; cursor: pointer; }
+    a:hover{ background: var(--magenta); color:#fff; }
+    .muted{ opacity: 0.75; font-size: 12px; }
+    .hr-dash{ border-bottom: 1px dashed var(--line); margin: 10px 0; }
+    .chip{ display:inline-block; padding: 1px 6px; border: 1px solid rgba(255,255,255,0.35); font-size: 11px; margin-right: 6px; opacity: 0.95; }
+    .chip.planet{ border-color: var(--cyan); }
+    .chip.region{ border-color: var(--yellow); color: var(--yellow); }
+    .chip.kind{ border-color: rgba(255,255,255,0.35); opacity: 0.9; }
+    .post{ padding: 8px 6px; border-bottom: 1px dashed var(--line); }
+    .post:last-child{ border-bottom:none; }
+    .post .ttl{ font-weight:700; display:block; margin-top: 4px; }
+    .post .meta{ font-size: 11px; opacity: 0.8; margin-top: 3px; }
+
+    /* [2] 추가 기능용 스타일 */
+    input[type="text"], input[type="password"], select {
+      background: #000; border: 1px solid var(--line); color: var(--cyan);
+      padding: 5px; font-family: inherit; width: 100%; box-sizing: border-box; margin-bottom: 10px;
+    }
+    .btn {
+      background: var(--line); color: #000; border: none; padding: 8px 12px;
+      font-weight: bold; cursor: pointer; font-family: inherit; width: 100%;
+    }
+    .btn:hover { background: var(--magenta); color: #fff; }
+    .guest-notice {
+      background: rgba(255, 0, 0, 0.15); border: 1px solid var(--red); color: var(--red);
+      padding: 10px; margin-bottom: 15px; font-size: 13px; text-align: center;
+    }
+    .abyss-link{ color: var(--red) !important; font-weight:700; animation: blinker 1s linear infinite; }
+    @keyframes blinker { 50% { opacity: 0; } }
+    .banner-list img{ width:88px; height:31px; border:1px solid #fff; margin: 4px 4px 0 0; }
+  </style>
+</head>
+
+<body>
+  <div class="logo">r<span class="highlight-A">A</span>iL-w<span class="highlight-A">A</span>y_g<span class="highlight-A">A</span>tE</div>
+  <div class="sub">:: iNtEr-pLaNeT_cOmMuNiTy hOmE ::</div>
+
+  <div class="marquee">
+    <marquee scrollamount="8">
+      [ NOTICE ] 행성 커뮤니티 통합 홈 — 행성/지역 태그로 글을 골라봐. |
+      [ LIVE ] ESNIA: 눈보라 경보 / CITRINE(ESNIA): 항만 축제 / EMBERFALL(ESNIA): 환전 수수료 이슈 / MERIDIAN(ESNIA): 야간 트램 혼잡 |
+      [ TIP ] 태그 두 개(행성+지역) 조합이 기본.
+    </marquee>
+  </div>
+
+  <div class="container">
+    <div class="box nav">
+      <div class="box-title">nAViGaTiOn</div>
+      <div class="muted">[common boards]</div>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li><a href="#">> [ FEED / 전체글 ]</a></li>
+        <li><a href="#">> [ NOTICE / 공지 ]</a></li>
+        <li><a href="#">> [ FREE / 자유 ]</a></li>
+        <li><a href="#">> [ Q&A / 질문 ]</a></li>
+        <li><a href="#">> [ MARKET / 거래 ]</a></li>
+      </ul>
+      <div class="hr-dash"></div>
+      <div class="muted">[planets]</div>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li><a href="#">> ESNIA (planet)</a></li>
+        <li class="muted" style="margin-top:6px;">└ regions (ESNIA)</li>
+        <li><a href="#">&nbsp;&nbsp;↳ CITRINE</a></li>
+        <li><a href="#">&nbsp;&nbsp;↳ EMBERFALL</a></li>
+        <li><a href="#">&nbsp;&nbsp;↳ MERIDIAN</a></li>
+      </ul>
+      <div class="hr-dash"></div>
+      <div class="muted">[special]</div>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li><a class="abyss-link">> uNdEr-tRaCk (18+)</a></li>
+      </ul>
+    </div>
+
+    <div id="center-main">
+      
+      <div class="box" id="login-section">
+        <div class="box-title">lOg-iN / 게이트 접속</div>
+        <div class="guest-notice"> [!] GUEST_MODE 접속 중. 데이터 동기화를 위해 로그인이 필요합니다. </div>
+        <div style="max-width: 320px; margin: 0 auto;">
+          <label class="muted">> uSeR_iDeNtItY</label>
+          <input type="text" id="id-input" placeholder="admin">
+          <label class="muted">> aCcEsS_kEy</label>
+          <input type="password" id="pw-input" placeholder="1234">
+          <button class="btn" onclick="tryLogin()">CONNECT TO GATE</button>
+          <div class="hr-dash"></div>
+          <p style="text-align:center;"><a onclick="toggleMode('join')" style="color:var(--yellow);">[ nEw_rEgIsTrAtIoN / 가입 신청 ]</a></p>
+        </div>
+      </div>
+
+      <div class="box" id="join-section" style="display:none;">
+        <div class="box-title" style="background:var(--cyan); color:#000;">jOiN / 거주권 신청</div>
+        <div class="muted" style="margin-bottom:15px;">새로운 행성 거주민 등록 프로세스</div>
+        <label class="muted">dEsIrEd-iD</label>
+        <input type="text" placeholder="ID 입력">
+        <label class="muted">hOmE-pLaNeT</label>
+        <select><option>ESNIA</option><option>VOID-01</option></select>
+        <button class="btn" style="background:var(--cyan);" onclick="alert('신청 접수!')">SUBMIT APPLICATION</button>
+        <p style="text-align:center; margin-top:15px;"><a onclick="toggleMode('login')" class="muted">[ 돌아가기 ]</a></p>
+      </div>
+
+      <div class="box" id="feed-section" style="display:none;">
+        <div class="box-title">fRoNt-pAgE / fEeD</div>
+        <div class="muted">
+          quick tags: <span class="chip planet">#ESNIA</span><span class="chip region">#CITRINE</span><span class="chip region">#EMBERFALL</span>
+        </div>
+        <div class="hr-dash"></div>
+        
+        <div class="post">
+          <span class="chip planet">#ESNIA</span><span class="chip region">#MERIDIAN</span><span class="chip kind">[익명]</span>
+          <a class="ttl">메리디안 쪽 야간 이동 왜 이렇게 밀림…?</a>
+          <div class="meta">작성자: uN-iD_pAsSeNgEr · 10분 전 · 댓글 12</div>
+        </div>
+        <div class="post">
+          <span class="chip planet">#ESNIA</span><span class="chip region">#CITRINE</span><span class="chip kind">[정보]</span>
+          <a class="ttl">시트린 항만 ‘서리송이’ 스무디 1+1 (오늘까지)</a>
+          <div class="meta">작성자: _fRoStBeRrY_ · 35분 전 · 댓글 7</div>
+        </div>
+        <div class="post">
+          <span class="chip planet">#ESNIA</span><span class="chip region">#CITRINE</span><span class="chip kind">[잡담]</span>
+          <a class="ttl">도서관 사서 블레어님… 오늘도 그냥… (말 잃음)</a>
+          <div class="meta">작성자: sEcReT-aDmIrEr · 1시간 전 · 댓글 31</div>
+        </div>
+        <div class="post">
+          <span class="chip planet">#ESNIA</span><span class="chip region">#EMBERFALL</span><span class="chip kind">[질문]</span>
+          <a class="ttl">엠버폴 환전 수수료 덜 나오는 창구 있음?</a>
+          <div class="meta">작성자: rEv-hUnTeR · 2시간 전 · 댓글 9</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="box">
+        <div class="box-title">lOg-iN</div>
+        <div id="status-text" class="muted">guest mode</div>
+        <div style="margin-top:8px; font-size:12px; line-height:1.4;">
+          닉네임: <b>tRaVeLeR</b><br />
+          소속: <span class="chip planet">#ESNIA</span><br />
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">tReNd / tAgS</div>
+        <div style="font-size:12px; line-height:1.6;">
+          <a href="#">#WARP-DELAY</a><br /><a href="#">#ICE-WEATHER</a><br /><a href="#">#LIBRARY</a>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">lInK-eXcHaNgE</div>
+        <div class="banner-list">
+          <img src="https://via.placeholder.com/88x31/00FFFF/000000?text=ESNIA">
+          <img src="https://via.placeholder.com/88x31/FFFF00/000000?text=CITRINE">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Copyright (C) 2026 rAiL-wAy_gAtE Community. All rights unreserved.</div>
+
+  <script>
+    // 화면 전환 (로그인 <-> 회원가입)
+    function toggleMode(mode) {
+      document.getElementById('login-section').style.display = (mode === 'login' ? 'block' : 'none');
+      document.getElementById('join-section').style.display = (mode === 'join' ? 'block' : 'none');
+    }
+
+    // 로그인 기능
+    function tryLogin() {
+      const id = document.getElementById('id-input').value;
+      const pw = document.getElementById('pw-input').value;
+
+      if (id === "admin" && pw === "1234") {
+        alert("◆ ACCESS GRANTED ◆");
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('feed-section').style.display = 'block';
+        document.getElementById('status-text').innerHTML = "<b>" + id + "</b> [ONLINE]";
+      } else {
+        alert("◆ ACCESS DENIED ◆");
+      }
+    }
+  </script>
+</body>
+</html>
