@@ -104,7 +104,7 @@ var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZa
 		<div id="init-lacking"><p>Browser lacks capabilities required to play.</p><p>Upgrade or switch to another browser.</p></div>
 		<div id="init-loading"><div>Loading&hellip;</div></div>
 	</div>
-	<tw-storydata name="Traveler_Star_codex_v0.16.11_refreshed" startnode="27" creator="Twine" creator-version="2.11.1" format="SugarCube" format-version="2.37.3" ifid="4A3C7347-D0B6-4DD7-9CE8-ABB80C9DF905" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* ============================================================
+	<tw-storydata name="Traveler_Star_codex_v0.16.11_refreshed" startnode="3" creator="Twine" creator-version="2.11.1" format="SugarCube" format-version="2.37.3" ifid="4A3C7347-D0B6-4DD7-9CE8-ABB80C9DF905" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* ============================================================
    1. 폰트 및 기본 초기화 (전역 스타일)
    ============================================================ */
 
@@ -331,53 +331,54 @@ html, body {
 .music-player {
     background: #2e3440;
     border-radius: var(--frame-radius);
-    padding: 12px; /* 패딩을 조금 더 늘려서 여유를 줬어 */
+    padding: 8px;
     margin-top: 5px;
     border: var(--frame-border);
     text-align: center;
     line-height: 1.2;
 }
 
-.now-playing { font-size: 0.85em; font-weight: bold; color: #eceff4; margin-bottom: 4px; }
-.singer-name { font-size: 0.7em; color: #a3be8c; display: block; margin-bottom: 8px; }
+.now-playing { font-size: 0.8em; font-weight: bold; color: #eceff4; margin-bottom: 3px; }
+.singer-name { font-size: 0.7em; color: #a3be8c; display: block; margin-bottom: 6px; }
 
-/* 재생바: 클릭 범위를 넓히고 두께를 키움 */
+/* 재생바: 높이 축소 */
 #bgm-bar {
     width: 100%;
-    height: 8px;       /* 전체 클릭 가능 높이 (중요!) */
-    background: rgba(67, 76, 94, 0.5); /* 배경색 투명도 조절 */
-    margin: 8px 0;
+    height: 6px;
+    background: rgba(67, 76, 94, 0.5);
+    margin: 6px 0;
     cursor: pointer;
     position: relative;
     border-radius: 4px;
     display: flex;
-    align-items: center; /* 내부 바를 중앙 정렬 */
+    align-items: center;
 }
 
 /* 실제로 채워지는 바 */
 #bgm-bar-fill {
-    height: 100%;       /* 부모 높이에 맞춤 */
-    width: 0%;          /* 자바스크립트가 조절함 */
+    height: 100%;
+    width: 0%;
     background: #88c0d0;
     border-radius: 4px;
     transition: width 0.1s linear;
-    pointer-events: none; /* 클릭 방해 금지 */
+    pointer-events: none;
 }
 
 .controls { 
     display: flex; 
     justify-content: center; 
-    gap: 20px; /* 버튼 사이 간격을 조금 더 넓혔어 */
-    margin-top: 8px;
+    gap: 12px;
+    margin-top: 6px;
 }
 
 .music-btn a { 
     color: #eceff4 !important; 
     text-decoration: none !important; 
-    font-size: 1.1em;
+    font-size: 1.0em;
 }
 
 /* Section 5: HUD (DAY-TIME / LOC-MONEY) */
+/* Section 5: HUD (DAY/LOC/MONEY - one line) */
 #hud-readout {
     display: flex;
     flex-direction: column;
@@ -385,28 +386,33 @@ html, body {
     justify-content: center;
     width: 100%;
     white-space: nowrap;
-    gap: 4px;
-    padding: 8px 0;
+    gap: 0;
+    padding: 6px 0;
 }
 
-.hud-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px; /* 항목 사이 간격 */
+/* 윗줄만 쓰고(=day-readout에 한 줄로 합쳐 넣음), 아래줄은 숨김 */
+.hud-row.hud-row-bottom{
+    display: none;
 }
 
-#loc-readout,
+/* time은 숨김(문자열은 JS에서 합쳐서 day-readout로 넣을 거라서) */
 #time-readout,
-#day-readout,
-#money-readout-hud,
-.hud-sep {
-    font-size: 0.8em !important;
-    opacity: 0.9 !important;
-    line-height: 1.2 !important;
+.hud-row.hud-row-top .hud-sep{
+    display: none;
+}
+
+#day-readout{
+    font-size: 0.8em;
+    opacity: 0.9;
+    line-height: 1.2;
     letter-spacing: 0.05em;
     color: #eceff4;
     display: inline-block;
+
+    /* 길어지면 말줄임 */
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 
@@ -3458,31 +3464,49 @@ html[data-passage="소지품창"] #passages{
    Sidebar: Phone spacing (stat panel <-> phone)
    ============================================================ */
 
-/* Make the phone sit closer to the stat panel (leave only a tiny gap) */
-#ui-bar #stat-panel,
-#ui-bar .stat-panel{
-  margin-bottom: 6px !important;
-}
+setup.sidebar = setup.sidebar || {};
 
-/* The wrapper prevents Twine's implicit <p> margins from creating a big gap */
-#ui-bar .caption-phone{
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
+setup.sidebar.ensureUI = function () {
+  const V = State.variables;
+  V.ui = (V.ui && typeof V.ui === "object") ? V.ui : {};
+  if (V.ui.statMoreOpen == null) V.ui.statMoreOpen = false;
+};
 
-/* If PhoneMount ends up wrapped in <p> or emits <br>, neutralize inside sidebar */
-#ui-bar .caption-phone > p{
-  margin: 0 !important;
-  display: contents !important;
-}
-#ui-bar .caption-phone br{
-  display: none !important;
-}
+setup.sidebar.applyStatToggle = function () {
+  setup.sidebar.ensureUI();
+  const V = State.variables;
 
-/* Keep #ui-phone-host from adding extra top spacing in the sidebar */
-#ui-bar #ui-phone-host{
-  margin-top: 0 !important;
-}
+  const panel = document.getElementById("stat-panel");
+  const btn = document.getElementById("stat-toggle");
+
+  if (panel) {
+    panel.classList.toggle("is-more-open", !!V.ui.statMoreOpen);
+  }
+  if (btn) {
+    // 접근성용 라벨(선택)
+    btn.setAttribute("aria-label", V.ui.statMoreOpen ? "능력치 접기" : "능력치 펼치기");
+  }
+};
+
+setup.sidebar.bindStatToggle = function () {
+  const btn = document.getElementById("stat-toggle");
+  if (!btn || btn.dataset.bound === "1") return;
+  btn.dataset.bound = "1";
+
+  btn.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    setup.sidebar.ensureUI();
+    State.variables.ui.statMoreOpen = !State.variables.ui.statMoreOpen;
+    setup.sidebar.applyStatToggle();
+  });
+};
+
+$(document).on(":passagerender :passagedisplay", function () {
+  try {
+    setup.sidebar.applyStatToggle();
+    setup.sidebar.bindStatToggle();
+  } catch (e) {}
+});
 
 
 /* ===== Inventory (minimal) ===== */
@@ -5938,10 +5962,22 @@ html[data-passage="도감"] #passages{
     const locEl = document.getElementById("loc-readout");
     const moneyEl = document.getElementById("money-readout-hud");
 
-    if (dayEl) dayEl.textContent = "DAY " + String(V.day ?? 0);
-    if (timeEl) timeEl.textContent = (setup.time && setup.time.formatAMPM) ? setup.time.formatAMPM() : "";
-    if (locEl) locEl.textContent = "LOC: " + setup.loc.text();
-    if (moneyEl) moneyEl.textContent = "R " + String(V.rev ?? 0);
+	if (dayEl) {
+	  const day = String(V.day ?? 0);
+
+	  let loc = "";
+	  try { loc = String(setup.loc.text() || ""); } catch (e) { loc = ""; }
+	  loc = loc.replace(/\s*\/\s*/g, " - ");
+
+	  const rev = String(V.rev ?? 0);
+
+	  dayEl.textContent = `DAY ${day} / LOC: ${loc} / R ${rev}`;
+	}
+
+	// time/loc/money는 이제 HUD에서 안 쓰니까 갱신 안 해도 됨
+	if (timeEl) timeEl.textContent = "";
+	if (locEl) locEl.textContent = "";
+	if (moneyEl) moneyEl.textContent = "";
 
     const hpEl = document.getElementById("stat-hp");
     const stressEl = document.getElementById("stat-stress");
@@ -8982,7 +9018,7 @@ $(document).on(":storyready", function(){ setup.cooking.bindOnce(); });
     console.error("[Craft] init failed:", e);
   }
 })();
-</script><tw-tag name="widget" color="yellow"></tw-tag><tw-passagedata pid="1" name="StoryInit" tags="" position="275,100" size="100,100">&lt;&lt;if $playerName is undefined&gt;&gt;&lt;&lt;set $playerName = &quot;여행자&quot;&gt;&gt;&lt;&lt;/if&gt;&gt;
+</script><tw-tag name="widget" color="yellow"></tw-tag><tw-passagedata pid="1" name="StoryInit" tags="" position="75,25" size="100,100">&lt;&lt;if $playerName is undefined&gt;&gt;&lt;&lt;set $playerName = &quot;여행자&quot;&gt;&gt;&lt;&lt;/if&gt;&gt;
 &lt;&lt;if $partnerName is undefined&gt;&gt;&lt;&lt;set $partnerName = &quot;첼시&quot;&gt;&gt;&lt;&lt;/if&gt;&gt;
 &lt;&lt;if $openingPace is undefined&gt;&gt;&lt;&lt;set $openingPace = &quot;now&quot;&gt;&gt;&lt;&lt;/if&gt;&gt;
 
@@ -9018,7 +9054,7 @@ $(document).on(":storyready", function(){ setup.cooking.bindOnce(); });
 &lt;&lt;if $shopSkin is undefined&gt;&gt;&lt;&lt;set $shopSkin = &quot;glass&quot;&gt;&gt;&lt;&lt;/if&gt;&gt;
 
 /* ===== 개발자 모드 ===== */
-&lt;&lt;if $devmode is undefined&gt;&gt;&lt;&lt;set $devmode = true&gt;&gt;&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="2" name="CoreWidgets" tags="widget" position="375,50" size="100,100">&lt;&lt;widget &quot;talk&quot;&gt;&gt;\
+&lt;&lt;if $devmode is undefined&gt;&gt;&lt;&lt;set $devmode = true&gt;&gt;&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="2" name="CoreWidgets" tags="widget" position="500,25" size="100,100">&lt;&lt;widget &quot;talk&quot;&gt;&gt;\
 &lt;&lt;set _data = $args[0]&gt;&gt;\
 &lt;&lt;set _target = $args[1]&gt;&gt;\
 &lt;&lt;if $talk_idx is undefined&gt;&gt;&lt;&lt;set $talk_idx = 0&gt;&gt;&lt;&lt;/if&gt;&gt;\
@@ -9881,7 +9917,7 @@ $(document).on(":storyready", function(){ setup.cooking.bindOnce(); });
   &lt;&lt;choices&gt;&gt;
   복도로 돌아간다 -&gt; Untitled Passage 1
   &lt;&lt;/choices&gt;&gt;
-&lt;&lt;/scene&gt;&gt;</tw-passagedata><tw-passagedata pid="5" name="사용법" tags="" position="575,275" size="100,100">\
+&lt;&lt;/scene&gt;&gt;</tw-passagedata><tw-passagedata pid="5" name="사용법" tags="" position="700,125" size="100,100">\
 이 프로젝트는 **v0.15 외형(CSS)**은 그대로 두고, 패시지에서 쓰는 문법만 간단하게 정리한 베이스야.
 
 ---
@@ -9957,7 +9993,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 &lt;&lt;loc &quot;엠버폴&quot; &quot;편의점&quot;&gt;&gt;
 &lt;&lt;loc &quot;편의점&quot;&gt;&gt; /* 큰 단위 유지하고 작은 단위만 변경 */
 }}}
-</tw-passagedata><tw-passagedata pid="6" name="StoryMenu" tags="" position="350,200" size="100,100">[[LOG|대화로그]]
+</tw-passagedata><tw-passagedata pid="6" name="StoryMenu" tags="" position="700,25" size="100,100">[[LOG|대화로그]]
 [[INVENTORY|소지품창]]
 [[GUIDE|행성가이드]]
 [[CODEX|도감]]
@@ -9969,7 +10005,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 
 [[PHONE|PHONE]]
 [[SETTING|설정창]]
-</tw-passagedata><tw-passagedata pid="7" name="StoryCaption" tags="" position="175,75" size="100,100">&lt;&lt;nobr&gt;&gt;
+</tw-passagedata><tw-passagedata pid="7" name="StoryCaption" tags="" position="175,25" size="100,100">&lt;&lt;nobr&gt;&gt;
 &lt;&lt;silently&gt;&gt;
 &lt;&lt;run setup.time.ensure()&gt;&gt;
 &lt;&lt;/silently&gt;&gt;
@@ -9988,6 +10024,28 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 &lt;/div&gt;
 
 &lt;hr&gt;
+
+&lt;div class=&quot;caption-phone&quot;&gt;&lt;&lt;PhoneMount&gt;&gt;&lt;/div&gt;
+
+&lt;div id=&quot;stat-panel&quot; class=&quot;stat-panel&quot;&gt;
+  &lt;!-- 기본 4스탯: 항상 표시 (체력/기력/정신/허기) --&gt;
+  &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;체력&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-hp&quot;&gt;&lt;&lt;print (typeof $hp !== &quot;undefined&quot; ? $hp : 100)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;기력&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-energy&quot;&gt;&lt;&lt;print (typeof $energy !== &quot;undefined&quot; ? $energy : 100)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;정신&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-sanity&quot;&gt;&lt;&lt;print (typeof $sanity !== &quot;undefined&quot; ? $sanity : 100)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;허기&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-hunger&quot;&gt;&lt;&lt;print (typeof $hunger !== &quot;undefined&quot; ? $hunger : 100)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
+
+  &lt;!-- 추가 능력치: 기본은 접힘 --&gt;
+  &lt;div class=&quot;stat-more&quot; id=&quot;stat-more&quot;&gt;
+    &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;채집&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-gather&quot;&gt;&lt;&lt;print (typeof $gather !== &quot;undefined&quot; ? $gather : 0)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;화술&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-speech&quot;&gt;&lt;&lt;print (typeof $speech !== &quot;undefined&quot; ? $speech : 0)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 토글 버튼 --&gt;
+  &lt;div class=&quot;stat-toggle-row&quot;&gt;
+    &lt;a href=&quot;javascript:void(0)&quot; class=&quot;stat-toggle&quot; id=&quot;stat-toggle&quot; aria-label=&quot;능력치 펼치기/접기&quot;&gt;▼&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
 &lt;div id=&quot;hud-readout&quot;&gt;
   &lt;div class=&quot;hud-row hud-row-top&quot;&gt;
     &lt;span id=&quot;day-readout&quot;&gt;DAY &lt;&lt;print ($day || 0)&gt;&gt;&lt;/span&gt;
@@ -10002,13 +10060,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
   &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id=&quot;stat-panel&quot; class=&quot;stat-panel&quot;&gt;
-  &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;체력&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-hp&quot;&gt;&lt;&lt;print (typeof $hp !== &quot;undefined&quot; ? $hp : 100)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
-  &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;스트레스&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-stress&quot;&gt;&lt;&lt;print (typeof $stress !== &quot;undefined&quot; ? $stress : 0)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
-  &lt;div class=&quot;stat-row&quot;&gt;&lt;span class=&quot;k&quot;&gt;피로&lt;/span&gt;&lt;span class=&quot;v&quot; id=&quot;stat-fatigue&quot;&gt;&lt;&lt;print (typeof $fatigue !== &quot;undefined&quot; ? $fatigue : 0)&gt;&gt;&lt;/span&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&quot;caption-phone&quot;&gt;&lt;&lt;PhoneMount&gt;&gt;&lt;/div&gt;
-&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="8" name="대화로그" tags="" position="800,100" size="100,100">&lt;div class=&quot;ts-panel&quot;&gt;
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="8" name="대화로그" tags="" position="800,125" size="100,100">&lt;div class=&quot;ts-panel&quot;&gt;
   &lt;div class=&quot;ts-panel-title&quot;&gt;LOG&lt;/div&gt;
 
   &lt;&lt;if !$dialogueLog or $dialogueLog.length is 0&gt;&gt;
@@ -10039,7 +10091,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
       &lt;&lt;goto _rt&gt;&gt;
     &lt;&lt;/link&gt;&gt;
   &lt;/div&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="소지품창" tags="" position="800,220" size="100,100">&lt;div class=&quot;ts-panel&quot;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="소지품창" tags="" position="900,125" size="100,100">&lt;div class=&quot;ts-panel&quot;&gt;
   &lt;div class=&quot;ts-panel-title&quot;&gt;INVENTORY&lt;/div&gt;
 
   &lt;&lt;run (setup.invEnsure &amp;&amp; setup.invEnsure())&gt;&gt;
@@ -10069,7 +10121,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
       &lt;&lt;goto _rt&gt;&gt;
     &lt;&lt;/link&gt;&gt;
   &lt;/div&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="행성가이드" tags="" position="800,340" size="100,100">&lt;div class=&quot;ts-panel&quot;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="행성가이드" tags="" position="1000,125" size="100,100">&lt;div class=&quot;ts-panel&quot;&gt;
   &lt;div class=&quot;ts-panel-title&quot;&gt;GUIDE&lt;/div&gt;
   &lt;div class=&quot;ts-muted&quot;&gt;
     행성/지역/시설 설명 페이지.&lt;br&gt;
@@ -10086,7 +10138,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
       &lt;&lt;goto _rt&gt;&gt;
     &lt;&lt;/link&gt;&gt;
   &lt;/div&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="11" name="정보창" tags="" position="800,460" size="100,100">&lt;div class=&quot;ts-panel&quot;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="11" name="정보창" tags="" position="700,225" size="100,100">&lt;div class=&quot;ts-panel&quot;&gt;
   &lt;div class=&quot;ts-panel-title&quot;&gt;INFO&lt;/div&gt;
   &lt;div class=&quot;ts-muted&quot;&gt;
     시스템 안내 / 크레딧 / 조작법 요약 / 데이터 설명 같은 걸 넣는 창.&lt;br&gt;
@@ -10126,7 +10178,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
       &lt;&lt;goto _rt&gt;&gt;
     &lt;&lt;/link&gt;&gt;
   &lt;/div&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="12" name="설정창" tags="" position="800,580" size="100,100">&lt;&lt;silently&gt;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="12" name="설정창" tags="" position="800,225" size="100,100">&lt;&lt;silently&gt;&gt;
 &lt;&lt;if $dialogueScale is undefined&gt;&gt;&lt;&lt;set $dialogueScale = 1&gt;&gt;&lt;&lt;/if&gt;&gt;
 &lt;&lt;if $blurMode is undefined&gt;&gt;&lt;&lt;set $blurMode = &quot;soft&quot;&gt;&gt;&lt;&lt;/if&gt;&gt;
 &lt;&lt;if $softBlur is undefined&gt;&gt;&lt;&lt;set $softBlur = 3&gt;&gt;&lt;&lt;/if&gt;&gt;
@@ -10246,7 +10298,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
       &lt;&lt;goto _rt&gt;&gt;
     &lt;&lt;/link&gt;&gt;
   &lt;/div&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="13" name="PHONE" tags="" position="800,700" size="100,100">&lt;&lt;silently&gt;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="13" name="PHONE" tags="" position="900,225" size="100,100">&lt;&lt;silently&gt;&gt;
 &lt;&lt;if $phone is undefined&gt;&gt;&lt;&lt;set $phone = { open:false, screen:&quot;home&quot; } &gt;&gt;&lt;&lt;/if&gt;&gt;
 &lt;&lt;if $phone.open&gt;&gt;
   &lt;&lt;run (setup.phone &amp;&amp; setup.phone.foldClose) ? setup.phone.foldClose() : (State.variables.phone.open=false) &gt;&gt;
@@ -10255,7 +10307,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 &lt;&lt;/if&gt;&gt;
 &lt;&lt;set _rt = setup.nav.safeReturnTitle([&quot;설정창&quot;,&quot;대화로그&quot;,&quot;소지품창&quot;,&quot;행성가이드&quot;,&quot;정보창&quot;,&quot;PHONE&quot;,&quot;사용법&quot;])&gt;&gt;
 &lt;&lt;/silently&gt;&gt;
-&lt;&lt;goto _rt&gt;&gt;</tw-passagedata><tw-passagedata pid="14" name="도감" tags="" position="800,820" size="100,100">&lt;&lt;silently&gt;&gt;
+&lt;&lt;goto _rt&gt;&gt;</tw-passagedata><tw-passagedata pid="14" name="도감" tags="" position="1000,225" size="100,100">&lt;&lt;silently&gt;&gt;
   &lt;&lt;if $codex is undefined&gt;&gt;&lt;&lt;set $codex = { mode:&quot;list&quot;, page:0, filterCat:&quot;all&quot;, sel:&quot;&quot; } &gt;&gt;&lt;&lt;/if&gt;&gt;
 &lt;&lt;/silently&gt;&gt;
 
@@ -10268,7 +10320,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
     &lt;&lt;set _rt = setup.nav.safeReturnTitle([&quot;설정창&quot;,&quot;대화로그&quot;,&quot;소지품창&quot;,&quot;행성가이드&quot;,&quot;정보창&quot;,&quot;PHONE&quot;,&quot;도감&quot;,&quot;사용법&quot;])&gt;&gt;
     &lt;&lt;goto _rt&gt;&gt;
   &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="15" name="System_Codex_Core" tags="" position="50,25" size="100,100">&lt;&lt;nobr&gt;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="15" name="System_Codex_Core" tags="" position="75,125" size="100,100">&lt;&lt;nobr&gt;&gt;
 &lt;&lt;silently&gt;&gt;
   &lt;&lt;if $codex is undefined&gt;&gt;&lt;&lt;set $codex = { mode:&quot;list&quot;, page:0, filterCat:&quot;all&quot;, sel:&quot;&quot; }&gt;&gt;&lt;&lt;/if&gt;&gt;
   &lt;&lt;set _mode = $codex.mode || &quot;list&quot;&gt;&gt;
@@ -10449,7 +10501,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
   &lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="16" name="System_Shop_Core" tags="" position="50,125" size="100,100">&lt;&lt;nobr&gt;&gt;
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="16" name="System_Shop_Core" tags="" position="175,125" size="100,100">&lt;&lt;nobr&gt;&gt;
 &lt;&lt;silently&gt;&gt;
 /* 1. 모드 설정 */
 &lt;&lt;if def _mode_override&gt;&gt;
@@ -10661,7 +10713,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 
     &lt;&lt;run setTimeout(() =&gt; setup.applyVisualMode(&quot;frost&quot;), 50)&gt;&gt;
 &lt;&lt;/if&gt;&gt;
-&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="17" name="편의점" tags="" position="25,350" size="100,100">
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="17" name="편의점" tags="" position="25,425" size="100,100">
 
 &lt;&lt;silently&gt;&gt;
 /* 1. 데이터 설정 */
@@ -10730,7 +10782,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
     &lt;/div&gt;
     &lt;&lt;run setTimeout(() =&gt; setup.applyVisualMode(&quot;none&quot;), 50)&gt;&gt;
 &lt;&lt;/if&gt;&gt;
-&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="18" name="시트린_항만" tags="" position="225,350" size="100,100">&lt;&lt;scene &quot;citrine_port&quot; &quot;⚓ 시트린 항만&quot;&gt;&gt;
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="18" name="시트린_항만" tags="" position="225,425" size="100,100">&lt;&lt;scene &quot;citrine_port&quot; &quot;⚓ 시트린 항만&quot;&gt;&gt;
 &lt;&lt;dialogue&gt;&gt;
 @ (임시) 시트린 항만. 짠내와 엔진 소리, 물류가 오간다.
 @ 항만 근처에 작은 파스타집 «솔트 &amp; 바질»이 있다.
@@ -10739,7 +10791,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 &lt;&lt;choices&gt;&gt;
 [[🍝 솔트 &amp; 바질로 간다|솔트_앤_바질]]
 [[🏙️ 중앙 광장으로|중앙_광장]]
-&lt;&lt;/choices&gt;&gt;</tw-passagedata><tw-passagedata pid="19" name="솔트_앤_바질" tags="" position="150,350" size="100,100">&lt;&lt;silently&gt;&gt;
+&lt;&lt;/choices&gt;&gt;</tw-passagedata><tw-passagedata pid="19" name="솔트_앤_바질" tags="" position="150,425" size="100,100">&lt;&lt;silently&gt;&gt;
 /* 시트린: 솔트 &amp; 바질 (파스타) */
 &lt;&lt;set $shop_conf = {
   ids: [&quot;sb_seafood_oil_pasta&quot;,&quot;sb_mussel_cream_pasta&quot;,&quot;sb_house_salad&quot;,&quot;sb_herb_tea&quot;],
@@ -10788,7 +10840,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 
   &lt;&lt;run setTimeout(() =&gt; setup.applyVisualMode(&quot;none&quot;), 50)&gt;&gt;
 &lt;&lt;/if&gt;&gt;
-&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="20" name="중앙_광장" tags="" position="75,350" size="100,100">&lt;&lt;scene &quot;plaza&quot; &quot;🏙️ 중앙 광장&quot;&gt;&gt;
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="20" name="중앙_광장" tags="" position="75,425" size="100,100">&lt;&lt;scene &quot;plaza&quot; &quot;🏙️ 중앙 광장&quot;&gt;&gt;
   &lt;&lt;dialogue&gt;&gt;
   @ (임시) 중앙 광장. 나중에 여기를 본격적으로 채우면 돼.
   @ 지금은 테스트용으로 만들어둔 패시지야.
@@ -10799,7 +10851,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
   ⚓ 시트린 항만 -&gt; 시트린_항만
   ◀ 시작으로 -&gt; Untitled Passage 1
   &lt;&lt;/choices&gt;&gt;
-&lt;&lt;/scene&gt;&gt;</tw-passagedata><tw-passagedata pid="21" name="컴퓨터" tags="" position="400,400" size="100,100">&lt;&lt;nobr&gt;&gt;
+&lt;&lt;/scene&gt;&gt;</tw-passagedata><tw-passagedata pid="21" name="컴퓨터" tags="" position="325,125" size="100,100">&lt;&lt;nobr&gt;&gt;
 &lt;div id=&quot;game-screen&quot;&gt;
   &lt;div id=&quot;main-view&quot;&gt;
     &lt;div class=&quot;vos-dialogue-offset&quot;&gt;&lt;/div&gt;
@@ -10808,7 +10860,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 &lt;/div&gt;
 &lt;&lt;/nobr&gt;&gt;
 &lt;&lt;VOSMount &quot;#vos-host&quot;&gt;&gt;
-</tw-passagedata><tw-passagedata pid="22" name="엠버폴_숲" tags="" position="500,600" size="100,100">&lt;&lt;scene &quot;emberfall_forest&quot; &quot;이동&quot;&gt;&gt;
+</tw-passagedata><tw-passagedata pid="22" name="엠버폴_숲" tags="" position="425,600" size="100,100">&lt;&lt;scene &quot;emberfall_forest&quot; &quot;이동&quot;&gt;&gt;
   &lt;&lt;loc &quot;엠버폴&quot; &quot;숲&quot;&gt;&gt;
 
   &lt;&lt;dialogue&gt;&gt;
@@ -10823,7 +10875,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
   행동
   탐색한다 =&gt; forest.explore ; min=5, max=10
   &lt;&lt;/choices&gt;&gt;
-&lt;&lt;/scene&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="엠버폴_가로수길" tags="" position="400,600" size="100,100">&lt;&lt;scene &quot;emberfall_street&quot; &quot;이동&quot;&gt;&gt;
+&lt;&lt;/scene&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="엠버폴_가로수길" tags="" position="325,600" size="100,100">&lt;&lt;scene &quot;emberfall_street&quot; &quot;이동&quot;&gt;&gt;
   &lt;&lt;loc &quot;엠버폴&quot; &quot;가로숲길&quot;&gt;&gt;
 
   &lt;&lt;dialogue&gt;&gt;
@@ -10835,7 +10887,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
   이동할 곳
   숲으로 들어간다 -&gt; 엠버폴_숲
   &lt;&lt;/choices&gt;&gt;
-&lt;&lt;/scene&gt;&gt;</tw-passagedata><tw-passagedata pid="24" name="CookingWidgets" tags="widget" position="400,125" size="100,100">:: CookingWidgets [widget]
+&lt;&lt;/scene&gt;&gt;</tw-passagedata><tw-passagedata pid="24" name="CookingWidgets" tags="widget" position="325,25" size="100,100">:: CookingWidgets [widget]
 &lt;&lt;widget &quot;CookingUI&quot;&gt;&gt;
 &lt;&lt;if $kitchen is undefined&gt;&gt;
     &lt;&lt;set $kitchen = { 
@@ -11001,7 +11053,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 &lt;/div&gt;
 
 &lt;&lt;/nobr&gt;&gt;
-&lt;&lt;/widget&gt;&gt;</tw-passagedata><tw-passagedata pid="25" name="Kitchen_Test" tags="" position="200,125" size="100,100">:: Kitchen_Test
+&lt;&lt;/widget&gt;&gt;</tw-passagedata><tw-passagedata pid="25" name="Kitchen_Test" tags="" position="550,250" size="100,100">:: Kitchen_Test
 &lt;&lt;set $loc = &quot;주방(테스트)&quot;&gt;&gt;
 
 &lt;div id=&quot;cook-root&quot;&gt;
@@ -11052,7 +11104,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
         &lt;&lt;set $pantry = setup.cooking.defaultPantry()&gt;&gt;
         &lt;&lt;run setup.cooking.render()&gt;&gt;
     &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="26" name="CraftingWidgets" tags="widget" position="400,250" size="100,100">:: CraftingWidgets [widget]
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="26" name="CraftingWidgets" tags="widget" position="425,25" size="100,100">:: CraftingWidgets [widget]
 &lt;&lt;widget &quot;CraftingUI&quot;&gt;&gt;
 &lt;&lt;if $craft is undefined&gt;&gt;
   &lt;&lt;set $craft = {
@@ -11221,7 +11273,7 @@ setup.portraitDB[&quot;첼시&quot;][&quot;놀람&quot;] = &quot;portraits/partn
 
 &lt;&lt;/nobr&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
-</tw-passagedata><tw-passagedata pid="27" name="Crafting_Test" tags="" position="200,250" size="100,100">:: Crafting_Test
+</tw-passagedata><tw-passagedata pid="27" name="Crafting_Test" tags="" position="450,250" size="100,100">:: Crafting_Test
 &lt;&lt;set $loc = &quot;제작(테스트)&quot;&gt;&gt;
 
 &lt;div id=&quot;craft-root&quot;&gt;
